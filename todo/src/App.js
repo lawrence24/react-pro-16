@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-//import logo from './logo.svg';
-//import './App.css';
+import { TodoBanner } from "./TodoBanner";
+import { TodoRow } from "./TodoRow";
+import { TodoCreator } from "./TodoCreator";
 
 class App extends Component {
   constructor(props) {
@@ -12,8 +13,8 @@ class App extends Component {
         { action: "Get Shoes", done: false },
         { action: "Collect tickets", done: true },
         { action: "Call Joe", done: false }
-      ],
-      newItemText: ""
+      ]
+      //newItemText: ""
     };
   }
 
@@ -23,16 +24,10 @@ class App extends Component {
     });
   };
 
-  createNewTodo = () => {
-    if (
-      !this.state.todoItems.find(item => item.action === this.state.newItemText)
-    ) {
+  createNewTodo = task => {
+    if (!this.state.todoItems.find(item => item.action === task)) {
       this.setState({
-        todoItems: [
-          ...this.state.todoItems,
-          { action: this.state.newItemText, done: false }
-        ],
-        newItemText: ""
+        todoItems: [...this.state.todoItems, { action: task, done: false }]
       });
     }
   };
@@ -42,6 +37,18 @@ class App extends Component {
       userName: this.state.userName === "Adam" ? "Bob" : "Adam"
     });
   };
+
+  toggleTodo = todo =>
+    this.setState({
+      todoItems: this.state.todoItems.map(item =>
+        item.action === todo.action ? { ...item, done: !item.done } : item
+      )
+    });
+
+  todoTableRows = () =>
+    this.state.todoItems.map(item => (
+      <TodoRow key={item.action} item={item} callback={this.toggleTodo} />
+    ));
 
   render = () => (
     <div>
@@ -59,12 +66,18 @@ class App extends Component {
             value={this.state.newItemText}
             onChange={this.updateNewTextValue}
           ></input>
-          <button
-            className="btn btn-primary mt-1"
-            onClick={this.createNewTodo0}
-          >
+          <button className="btn btn-primary mt-1" onClick={this.createNewTodo}>
             Add
           </button>
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Done</th>
+              </tr>
+            </thead>
+            <tbody>{this.todoTableRows()} </tbody>
+          </table>
         </div>
       </div>
     </div>
